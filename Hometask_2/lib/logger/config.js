@@ -21,6 +21,7 @@ function getFileValue(value, constantValues, filePath) {
     const confObject = JSON.parse(file);
 
     const configValue = confObject[value].toUpperCase();
+
     return constantValues[configValue];
 }
 
