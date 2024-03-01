@@ -5,59 +5,64 @@ import {level, appender as appenderValues} from "./constants.js";
 const defaultConfig = {
     logLevel: constants.level.INFO,
     scoreLevel: constants.scoreLevel[constants.level.INFO],
-    appender: constants.appender.CONSOLE
+    appender: [constants.appender.CONSOLE]
+}
+
+function initConfig() {
+    const config = defaultConfig;
+
+    const logLevel = getLogLevel();
+
+    const appender = getAppenders();
+
+    config.logLevel = logLevel
+    config.appender = appender
+
+
+    enrichConfig(config);
+    return config;
 }
 
 function enrichConfig(config) {
     config.scoreLevel = constants.scoreLevel[config.logLevel]
 }
 
-function getFileValue(value, constantValues, filePath) {
-    if(!filePath) {
-        return null;
-    }
-
-    const file = fs.readFileSync(filePath, 'utf-8');
-    const confObject = JSON.parse(file);
-
-    const configValue = confObject[value].toUpperCase();
-
-    return constantValues[configValue];
+function getConfiguration() {
+    const file = fs.readFileSync(process.env.LOG_CONFIG_FILE, 'utf-8');
+    return JSON.parse(file);
 }
 
-function getConfigurationValue(envValue, constantValues, valueName) {
-    const fileValue = getFileValue(valueName, constantValues, process.env.LOG_CONFIG_FILE);
+function getLogLevel() {
+    const confObject = getConfiguration();
 
-    if (!envValue) {
-        return fileValue || defaultConfig[valueName];
+    if (!process.env.LOG_LEVEL) {
+        return confObject['logLevel'].toUpperCase() || defaultConfig['logLevel'];
     }
 
-    return envValue.toUpperCase();
+    return process.env.LOG_LEVEL;
 }
 
-function initConfig() {
-    const config = defaultConfig;
+function getAppenders() {
+    const confObject = getConfiguration();
 
-    const logLevel = getConfigurationValue(
-        process.env.LOG_LEVEL,
-        level,
-        'logLevel'
-    );
+    const appenderArray = [];
 
-    const appender = getConfigurationValue(
-        process.env.LOG_APPENDER,
-        appenderValues,
-        'appender'
-    );
+    confObject['appender'].forEach(
+        value => (
+            appenderArray.push(appenderValues[value.toUpperCase()])
+        )
+    )
 
-    console.log('appender', appender)
-    config.logLevel = logLevel
-    config.appender = appender
+    if (!process.env.LOG_APPENDER) {
+        return appenderArray || defaultConfig['appender'];
+    }
 
-    enrichConfig(config);
-
-    return config;
+    return [process.env.LOG_APPENDER];
 }
 
 const config = initConfig();
 export default config;
+
+
+
+

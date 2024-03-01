@@ -22,7 +22,7 @@ function joinMessages(messages) {
     return array.join(',');
 }
 
-const appender = appenderStrategy.getAppender();
+const appenders = appenderStrategy.getAppender();
 
 function executeLog(level, category, message, format) {
     const appenderValues = {
@@ -34,7 +34,11 @@ function executeLog(level, category, message, format) {
     }
 
     if (scoreLevel[level] <= config.scoreLevel) {
-        appender.log(appenderValues);
+        appenders.forEach(
+            appender => {
+                appender.log(appenderValues)
+            }
+        );
     }
 }
 

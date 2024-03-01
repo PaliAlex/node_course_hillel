@@ -46,7 +46,7 @@ function formatMessage(appenderValues) {
     const {date, level, category, message, format} = appenderValues;
 
     return format === messageFormat.JSON
-        ? JSON.stringify(appenderValues)
+        ?  JSON.stringify(appenderValues)
         : `Date: ${date}, category:${category}, level:${level}, message:${JSON.stringify(message)}`
 }
 

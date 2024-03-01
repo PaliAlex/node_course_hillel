@@ -19,7 +19,7 @@ import fruit from "./fruit.js";
 import {add} from "./handler.js"
 import {messageFormat} from "./lib/logger/constants.js";
 
-const log = logger.getLogger("app.js", messageFormat.CSV);
+const log = logger.getLogger("app.js");
 
 log.info([color, fruit]);
 log.info([fruit]);

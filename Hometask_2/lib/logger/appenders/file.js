@@ -1,6 +1,7 @@
 function log(appenderValues) {
-    //TODO тут має бути логіка апендера у файл
-    console.log(appenderValues, 'appenderValues')
+    const {date, level, category, message} = appenderValues;
+
+    console.log(`Date: ${date}, category:${category}, level:${level}, message:${JSON.stringify(message)}`);
 }
 
 export default {log};

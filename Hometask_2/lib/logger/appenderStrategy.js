@@ -9,7 +9,7 @@ const appenders = {
 };
 
 function getAppender(){
-    return appenders[config.appender];
+    return config.appender.map(it => appenders[it]);
 }
 
 export {getAppender}
