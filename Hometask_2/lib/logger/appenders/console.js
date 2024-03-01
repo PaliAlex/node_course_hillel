@@ -1,23 +1,62 @@
 import * as fs from "fs";
-import {level as levelConstant} from "../constants.js";
+import moment from "moment";
+import {level as levelConstant, messageFormat} from "../constants.js";
+import {createObjectCsvWriter} from "csv-writer";
 
-function log(date, level, category, message) {
-    console.log(formatMessage(date, level, category, message));
+function log(appenderValues) {
+    appenderValues.format === messageFormat.CSV
+        ? writeToCSV(appenderValues).then(() => { console.log('Written to CSV') })
+        : writeToFile(appenderValues)
 }
 
-function formatMessage(date,level, category, message) {
-    const formattedMessage = `Date: ${date}, category:${category}, level:${level}, message:${JSON.stringify(message)}`
+async function writeToCSV(data) {
+    const fileName = `${moment(data.date).format('DD_MM_YYYY')}.csv`;
+    const exists = fs.existsSync(fileName);
 
-    writeToFile('app.log', formattedMessage)
+    const dataToWrite = {
+        ...data,
+        message: JSON.stringify(data.message)
+    }
 
-    level === levelConstant.ERROR && writeToFile('app_error.log', formattedMessage)
+    const csvWriter = createObjectCsvWriter({
+        path: fileName,
+        header: [
+            { id: 'date', title: 'Date' },
+            { id: 'category', title: 'Category' },
+            { id: 'level', title: 'Level' },
+            { id: 'message', title: 'Message' }
+        ],
+        append: exists,
+    });
 
-    return formattedMessage;
+    await csvWriter.writeRecords([dataToWrite])
 }
 
-function writeToFile(filePath, message) {
-    const messageToFile = fs.existsSync(filePath) ? `\n${message}` : message;
+function writeToFile(appenderValues) {
+    const { format, level } = appenderValues;
 
-    fs.writeFileSync(filePath, messageToFile, {flag: 'a+'})
+    const formattedMessage = formatMessage(appenderValues);
+
+    writeFileCommon(`app_${format.toLowerCase()}.log`, formattedMessage, format);
+
+    level === levelConstant.ERROR && writeFileCommon(`error_${format.toLowerCase()}.log`, formattedMessage)
 }
+
+function formatMessage(appenderValues) {
+    const {date, level, category, message, format} = appenderValues;
+
+    return format === messageFormat.JSON
+        ? JSON.stringify(appenderValues)
+        : `Date: ${date}, category:${category}, level:${level}, message:${JSON.stringify(message)}`
+}
+
+function writeFileCommon(filePath, message) {
+    fs.writeFile(
+        filePath,
+        `\n${message}`,
+        {flag: 'a+'},
+        err => err && console.error(err)
+    )
+}
+
 export default {log};

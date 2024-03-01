@@ -50,6 +50,7 @@ function initConfig() {
         'appender'
     );
 
+    console.log('appender', appender)
     config.logLevel = logLevel
     config.appender = appender
 
