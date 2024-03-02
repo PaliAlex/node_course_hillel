@@ -3,13 +3,13 @@ import {scoreLevel, level, messageFormat} from "./constants.js";
 import * as appenderStrategy from "./appenderStrategy.js"
 
 const logger = (category, format) => ({
-    info: (messages) => {
+    info: (...messages) => {
         executeLog(level.INFO, category, joinMessages(messages), format)
     },
-    warn: (messages) => {
+    warn: (...messages) => {
         executeLog(level.WARN, category, joinMessages(messages), format)
     },
-    error: (messages) => {
+    error: (...messages) => {
         executeLog(level.ERROR, category, joinMessages(messages), format)
     }
 });

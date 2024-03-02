@@ -18,12 +18,21 @@ import color from "./color.js";
 import fruit from "./fruit.js";
 import {add} from "./handler.js"
 import {messageFormat} from "./lib/logger/constants.js";
+const data = {
+    id: 123,
+    value: 'someData'
+};
 
+const user = {
+    id: 999,
+    userName: 'Name Of User'
+}
 const log = logger.getLogger("app.js");
 
-log.info([color, fruit]);
-log.info([fruit]);
-log.error(["ERROR occur: My log"]);
+log.info("Data", data, "User:", user, "Sdf", "test");
+log.info(color, fruit);
+log.info(fruit);
+log.error("ERROR occur: My log");
 
 add(3,5);
 
