@@ -4,13 +4,13 @@ import * as appenderStrategy from "./appenderStrategy.js"
 
 const logger = (category, format) => ({
     info: (...messages) => {
-        executeLog(level.INFO, category, joinMessages(messages), format)
+        executeLog(level.INFO, category, messages, format)
     },
     warn: (...messages) => {
-        executeLog(level.WARN, category, joinMessages(messages), format)
+        executeLog(level.WARN, category, messages, format)
     },
     error: (...messages) => {
-        executeLog(level.ERROR, category, joinMessages(messages), format)
+        executeLog(level.ERROR, category, messages, format)
     }
 });
 
@@ -22,14 +22,14 @@ function joinMessages(messages) {
     return array.join(',');
 }
 
-const appenders = appenderStrategy.getAppender();
+const appenders = appenderStrategy.getAppenders();
 
-function executeLog(level, category, message, format) {
+function executeLog(level, category, messages, format) {
     const appenderValues = {
         date: Date.now(),
         level,
         category,
-        message,
+        messages: joinMessages(messages),
         format
     }
 
@@ -43,7 +43,7 @@ function executeLog(level, category, message, format) {
 }
 
 export default {
-    getLogger(category, format=`${messageFormat.DEFAULT}`) {
+    getLogger(category, format= messageFormat.DEFAULT) {
         return logger(category, format);
     }
 };

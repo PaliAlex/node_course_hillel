@@ -8,8 +8,8 @@ const appenders = {
     [constants.appender.FILE]: fileAppender,
 };
 
-function getAppender(){
+function getAppenders(){
     return config.appender.map(it => appenders[it]);
 }
 
-export {getAppender}
+export {getAppenders}
