@@ -1,4 +1,4 @@
 {
   "logLevel": "Info",
-  "appender": "console"
+  "appender": ["console", "file"]
 }

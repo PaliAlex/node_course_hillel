@@ -1,31 +1,49 @@
 import config from "./config.js";
-import {scoreLevel, level} from "./constants.js";
+import {scoreLevel, level, messageFormat} from "./constants.js";
 import * as appenderStrategy from "./appenderStrategy.js"
 
-const logger = (category) => ({
-    info: (message) => {
-        executeLog(level.INFO, category, message)
+const logger = (category, format) => ({
+    info: (...messages) => {
+        executeLog(level.INFO, category, messages, format)
     },
-    warn: (message) => {
-        executeLog(level.WARN, category, message)
+    warn: (...messages) => {
+        executeLog(level.WARN, category, messages, format)
     },
-    error: (message) => {
-        executeLog(level.ERROR, category, message)
+    error: (...messages) => {
+        executeLog(level.ERROR, category, messages, format)
     }
 });
 
-const appender = appenderStrategy.getAppender();
+function joinMessages(messages) {
+    const array = [];
 
-function executeLog(level, category, message) {
+    messages.forEach(it => array.push(JSON.stringify(it)));
+
+    return array.join(',');
+}
+
+const appenders = appenderStrategy.getAppenders();
+
+function executeLog(level, category, messages, format) {
+    const appenderValues = {
+        date: Date.now(),
+        level,
+        category,
+        messages: joinMessages(messages),
+        format
+    }
+
     if (scoreLevel[level] <= config.scoreLevel) {
-        appender.log(Date.now(), level, category, message);
+        appenders.forEach(
+            appender => {
+                appender.log(appenderValues)
+            }
+        );
     }
 }
 
-
-
 export default {
-    getLogger(category) {
-        return logger(category);
+    getLogger(category, format= messageFormat.DEFAULT) {
+        return logger(category, format);
     }
 };
