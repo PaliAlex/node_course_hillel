@@ -1,15 +1,31 @@
 import * as fs from "fs";
 import moment from "moment";
-import {level as levelConstant, messageFormat} from "../constants.js";
+import EventEmitter from "node:events";
+import {messageFormat} from "../constants.js";
 import {createObjectCsvWriter} from "csv-writer";
 
-function log(appenderValues) {
+export const fileLogEvent = new EventEmitter();
+
+fileLogEvent.on('log',  (appenderValues, stream) => {
+    log(appenderValues, stream);
+});
+
+function log(appenderValues, stream) {
     appenderValues.format === messageFormat.CSV
-        ? writeToCSV(appenderValues)
-        : writeToFile(appenderValues)
+        ? writeToCSV(appenderValues, stream)
+        : writeToFile(appenderValues, stream)
 }
 
-async function writeToCSV(data) {
+function writeToCSV(appenderValues, stream) {
+    stream.write({
+        date: appenderValues.date,
+        category: appenderValues.category,
+        level: appenderValues.level,
+        message: JSON.stringify(appenderValues.message),
+    });
+}
+
+async function writeToCSV2(data) {
     const fileName = `${moment(data.date).format('DD_MM_YYYY')}.csv`;
     const exists = fs.existsSync(fileName);
 
@@ -32,31 +48,6 @@ async function writeToCSV(data) {
     await csvWriter.writeRecords([dataToWrite])
 }
 
-function writeToFile(appenderValues) {
-    const { format, level } = appenderValues;
-
-    const formattedMessage = formatMessage(appenderValues);
-
-    writeFileCommon(`app_${format.toLowerCase()}.log`, formattedMessage, format);
-
-    level === levelConstant.ERROR && writeFileCommon(`error_${format.toLowerCase()}.log`, formattedMessage)
+function writeToFile(appenderValues, stream) {
+    stream.push(JSON.stringify(appenderValues));
 }
-
-function formatMessage(appenderValues) {
-    const {date, level, category, message, format} = appenderValues;
-
-    return format === messageFormat.JSON
-        ?  JSON.stringify(appenderValues)
-        : `Date: ${date}, category:${category}, level:${level}, message:${JSON.stringify(message)}`
-}
-
-function writeFileCommon(filePath, message) {
-    fs.writeFile(
-        filePath,
-        `\n${message}`,
-        {flag: 'a+'},
-        err => err && console.error(err)
-    )
-}
-
-export default {log};

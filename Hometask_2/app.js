@@ -27,12 +27,12 @@ const user = {
     id: 999,
     userName: 'Name Of User'
 }
-const log = logger.getLogger("app.js");
+const log = logger.getLogger("app.js", messageFormat.CSV);
 
 log.info("Data", data, "User:", user, "Sdf", "test");
 log.info(color, fruit);
 log.info(fruit);
-log.error("ERROR occur: My log");
-
-add(3,5);
+// log.error("ERROR occur: My log");
+//
+// add(3,5);
 

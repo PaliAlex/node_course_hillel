@@ -1,7 +1,11 @@
-function log(appenderValues) {
-    const {date, level, category, message} = appenderValues;
+import EventEmitter from "node:events";
 
-    console.log(`Date: ${date}, category:${category}, level:${level}, message:${JSON.stringify(message)}`);
+export const consoleLogEvent = new EventEmitter();
+
+consoleLogEvent.on('log',  (appenderValues, stream) => {
+    log(appenderValues, stream);
+});
+
+function log(appenderValues, stream) {
+    stream.push(JSON.stringify(appenderValues));
 }
-
-export default {log};

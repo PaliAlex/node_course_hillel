@@ -1,45 +1,51 @@
 import config from "./config.js";
-import {scoreLevel, level, messageFormat} from "./constants.js";
-import * as appenderStrategy from "./appenderStrategy.js"
+import {level, messageFormat, appender, level as levelConstant} from "./constants.js";
+import {consoleLogEvent} from "./appenders/console.js";
+import {fileLogEvent} from "./appenders/file.js";
+import {joinMessages} from "./helpers/joinMessages.js";
+import {LoggerStream} from "./streams/LoggerStream.js";
 
-const logger = (category, format) => ({
-    info: (...messages) => {
-        executeLog(level.INFO, category, messages, format)
-    },
-    warn: (...messages) => {
-        executeLog(level.WARN, category, messages, format)
-    },
-    error: (...messages) => {
-        executeLog(level.ERROR, category, messages, format)
-    }
-});
-
-function joinMessages(messages) {
-    const array = [];
-
-    messages.forEach(it => array.push(JSON.stringify(it)));
-
-    return array.join(',');
-}
-
-const appenders = appenderStrategy.getAppenders();
+const logger = (category, format) => {
+    return ({
+        info: (...messages) => {
+            executeLog(level.INFO, category, messages, format)
+        },
+        warn: (...messages) => {
+            executeLog(level.WARN, category, messages, format)
+        },
+        error: (...messages) => {
+            executeLog(level.ERROR, category, messages, format)
+        }
+    });
+};
 
 function executeLog(level, category, messages, format) {
     const appenderValues = {
         date: Date.now(),
         level,
         category,
-        messages: joinMessages(messages),
-        format
+        message: joinMessages(messages),
+        format,
     }
 
-    if (scoreLevel[level] <= config.scoreLevel) {
-        appenders.forEach(
-            appender => {
-                appender.log(appenderValues)
-            }
-        );
-    }
+    emitEvent(appenderValues);
+}
+
+function emitEvent(appenderValues) {
+    const logger = new LoggerStream();
+
+    config.appender.forEach(it => {
+        switch (it) {
+            case appender.CONSOLE:
+                consoleLogEvent.emit('log', appenderValues, logger.consoleLogStream())
+                return;
+            case appender.FILE:
+                fileLogEvent.emit('log', appenderValues, logger.fileLogStream(appenderValues))
+                return;
+
+            default: return;
+        }
+    })
 }
 
 export default {
