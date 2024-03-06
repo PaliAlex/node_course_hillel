@@ -11,8 +11,8 @@ export class LoggerStream {
         const {format, level, date} = appenderValues;
 
         return format === messageFormat.CSV
-            ? this.logCSV(date)
-            : this.logFile(level, format)
+            ? this._logCSV(date)
+            : this._logFile(level, format)
     }
 
     consoleLogStream() {
@@ -28,7 +28,7 @@ export class LoggerStream {
         return readable;
     }
 
-    logCSV(date) {
+    _logCSV(date) {
         const fileName = `${moment(date).format('DD_MM_YYYY')}.csv`;
 
         const writer = csvWriter({sendHeaders: false});
@@ -39,7 +39,7 @@ export class LoggerStream {
         return writer;
     }
 
-    logFile(level, format) {
+    _logFile(level, format) {
         const readable = new Readable({
             read(size) {},
             encoding: 'utf8',
