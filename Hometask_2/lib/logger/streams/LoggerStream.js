@@ -1,21 +1,13 @@
 import fs from "fs";
-import moment from "moment";
 import {Readable} from "stream";
 import FilenameTransformer from "../transformer.js";
 import {getFileName} from "../helpers/getFileName.js";
-import {messageFormat} from "../constants.js";
-import csvWriter from 'csv-write-stream';
+import {appender as appenderConstant} from "../constants.js";
 
 export class LoggerStream {
-    fileLogStream(appenderValues) {
-        const {format, level, date} = appenderValues;
+    fileLogStream(appenderValues, appender) {
+        const {level, date} = appenderValues;
 
-        return format === messageFormat.CSV
-            ? this._logCSV(date)
-            : this._logFile(level, format)
-    }
-
-    consoleLogStream() {
         const readable = new Readable({
             read(size) {},
             encoding: 'utf8',
@@ -23,33 +15,19 @@ export class LoggerStream {
 
         const transform =  readable.pipe(new FilenameTransformer());
 
-        transform.pipe(process.stdout);
+        this._pipeTransform(level, date, transform, appender)
 
         return readable;
     }
 
-    _logCSV(date) {
-        const fileName = `${moment(date).format('DD_MM_YYYY')}.csv`;
+    _pipeTransform(level, date, transform, appender) {
+        if(appender === appenderConstant.CONSOLE) {
+            transform.pipe(process.stdout);
 
-        const writer = csvWriter({sendHeaders: false});
-        const fileStream = fs.createWriteStream(fileName, {flags: 'a'});
+            return;
+        }
 
-        writer.pipe(fileStream);
-
-        return writer;
-    }
-
-    _logFile(level, format) {
-        const readable = new Readable({
-            read(size) {},
-            encoding: 'utf8',
-        });
-
-        const transform =  readable.pipe(new FilenameTransformer());
-
-        const writeStream = fs.createWriteStream(getFileName(level, format), {flags: 'a+'});
+        const writeStream = fs.createWriteStream(getFileName(level, date), {flags: 'a+'});
         transform.pipe(writeStream);
-
-        return readable;
     }
 }

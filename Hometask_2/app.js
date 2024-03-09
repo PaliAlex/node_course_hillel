@@ -27,7 +27,7 @@ const user = {
     id: 999,
     userName: 'Name Of User'
 }
-const log = logger.getLogger("app.js", messageFormat.CSV);
+const log = logger.getLogger("app.js");
 
 log.info("Data", data, "User:", user, "Sdf", "test");
 log.info(color, fruit);

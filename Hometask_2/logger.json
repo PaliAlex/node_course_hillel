@@ -1,4 +1,5 @@
 {
   "logLevel": "Info",
-  "appender": ["console", "file"]
+  "appender": ["console", "file"],
+  "format": "csv"
 }

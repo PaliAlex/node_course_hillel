@@ -1,8 +1,8 @@
 import EventEmitter from "node:events";
 
-export const consoleLogEvent = new EventEmitter();
+export const logEvent = new EventEmitter();
 
-consoleLogEvent.on('log',  (appenderValues, stream) => {
+logEvent.on('log',  (appenderValues, stream) => {
     log(appenderValues, stream);
 });
 
