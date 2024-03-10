@@ -32,7 +32,7 @@ const log = logger.getLogger("app.js");
 log.info("Data", data, "User:", user, "Sdf", "test");
 log.info(color, fruit);
 log.info(fruit);
-log.error("ERROR occur: My log");
-
-add(3,5);
+// log.error("ERROR occur: My log");
+//
+// add(3,5);
 

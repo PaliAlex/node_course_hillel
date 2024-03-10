@@ -1,49 +1,46 @@
 import config from "./config.js";
-import {scoreLevel, level, messageFormat} from "./constants.js";
-import * as appenderStrategy from "./appenderStrategy.js"
+import {level} from "./constants.js";
+import {logEvent} from "./appenders/log.js";
+import {joinMessages} from "./helpers/joinMessages.js";
+import {LoggerStream} from "./streams/LoggerStream.js";
 
-const logger = (category, format) => ({
-    info: (...messages) => {
-        executeLog(level.INFO, category, messages, format)
-    },
-    warn: (...messages) => {
-        executeLog(level.WARN, category, messages, format)
-    },
-    error: (...messages) => {
-        executeLog(level.ERROR, category, messages, format)
-    }
-});
+const logger = (category, format) => {
+    return ({
+        info: (...messages) => {
+            executeLog(level.INFO, category, messages)
+        },
+        warn: (...messages) => {
+            executeLog(level.WARN, category, messages)
+        },
+        error: (...messages) => {
+            executeLog(level.ERROR, category, messages)
+        }
+    });
+};
 
-function joinMessages(messages) {
-    const array = [];
-
-    messages.forEach(it => array.push(JSON.stringify(it)));
-
-    return array.join(',');
-}
-
-const appenders = appenderStrategy.getAppenders();
-
-function executeLog(level, category, messages, format) {
+function executeLog(level, category, messages) {
     const appenderValues = {
         date: Date.now(),
         level,
         category,
-        messages: joinMessages(messages),
-        format
+        message: joinMessages(messages),
     }
 
-    if (scoreLevel[level] <= config.scoreLevel) {
-        appenders.forEach(
-            appender => {
-                appender.log(appenderValues)
-            }
-        );
-    }
+    const logger = new LoggerStream();
+
+    emitEvent(appenderValues);
+}
+
+function emitEvent(appenderValues) {
+    const logger = new LoggerStream();
+
+    config.appender.forEach(it => {
+        logEvent.emit('log', appenderValues, logger.fileLogStream(appenderValues, it))
+    })
 }
 
 export default {
-    getLogger(category, format= messageFormat.DEFAULT) {
-        return logger(category, format);
+    getLogger(category) {
+        return logger(category);
     }
 };
