@@ -1,12 +1,23 @@
 {
   "name": "node_course_hillel",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Hillel project",
+  "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "nodemon url-shorter/app.js",
+    "test": "test"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "keywords": [
+    "hillel",
+    "node.js"
+  ],
+  "author": "me",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "ejs": "^3.1.9",
+    "express": "^4.18.3",
+    "lodash": "^4.17.21",
+    "pug": "^3.0.2"
+  }
 }
