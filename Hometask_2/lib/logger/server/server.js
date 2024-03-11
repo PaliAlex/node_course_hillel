@@ -1,30 +1,37 @@
-import * as http from "http";
 import * as net from "net";
+import http from "http";
 
-export const server = http.createServer((req, res) => {
-    console.log('connection established');
-    let dataBuffer = '';
+const logsCache = [];
 
-    if(req.method === "GET" && req.url === "/logs") {
-        const netClient = net.connect({ port: 7000 }, () => {
-            netClient.on('data', data => {
-                dataBuffer += data.toString();
-            });
-
-            netClient.on('end', () => {
-                console.log('Disconnected from TCP server');
-            });
-        });
-
-        res.write(JSON.stringify(dataBuffer))
+const httpserver = http.createServer((req, res) => {
+    if (req.url === '/logs' && req.method === 'GET') {
+        res.end(JSON.stringify(logsCache));
         res.statusCode = 200
-    }else{
-        res.statusCode = 404;
+    } else {
+        res.statusCode = 404
+        res.end('Not found\n');
     }
+});
 
-    res.end()
+const server = net.createServer((socket) => {
+    console.log('Client connected');
+
+    socket.on('data', (data) => {
+        const log = data.toString();
+        console.log('Received log:', log);
+        logsCache.push(log);
+    });
+
+    socket.on('end', () => {
+        console.log('Client disconnected');
+    });
+});
+
+
+httpserver.listen(8000, () => {
+    console.log('http server started');
 })
 
-server.listen(8000, () => {
-    console.log('server started');
-})
+server.listen(7000, 'localhost', () => {
+    console.log('Socket server running');
+});

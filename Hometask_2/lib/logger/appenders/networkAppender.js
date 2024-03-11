@@ -13,6 +13,9 @@ export function initNetworkAppender(appenderValue) {
 
 
     client.write(data);
+
+    client.end();
+
     process.on("exit", ()=>{
         console.log('exit')
     })

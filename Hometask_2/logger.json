@@ -1,7 +1,7 @@
 {
   "logLevel": "Info",
-  "appender": ["console", "network", "file"],
+  "appender": ["network"],
   "format": "csv",
   "port": 7000,
-  "hostname": "qwe"
+  "hostname": "localhost"
 }
