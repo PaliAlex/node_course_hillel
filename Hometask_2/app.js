@@ -16,8 +16,7 @@ import logger from "./lib/logger/logger.js";
 
 import color from "./color.js";
 import fruit from "./fruit.js";
-import {add} from "./handler.js"
-import {messageFormat} from "./lib/logger/constants.js";
+
 const data = {
     id: 123,
     value: 'someData'
