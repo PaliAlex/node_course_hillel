@@ -12,8 +12,4 @@ const generateHash = (length) => {
     return string;
 }
 
-
-
-module.exports = {
-    generateHash,
-}
+export default generateHash
