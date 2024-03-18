@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User creation</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="index.css">
+</head>
+<body>
+<div class="main-container">
+    <form class="data-creation" id="dataForm">
+        <h2>Add a url to short it</h2>
+        <div class="mb-3">
+            <label for="name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="name">
+        </div>
+        <div class="mb-3">
+            <label for="url" class="form-label">Url</label>
+            <input type="text" class="form-control" id="url">
+        </div>
+        <div class="d-flex p-2">
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <div class="response-message" id="responseMessage"></div>
+        </div>
+    </form>
+    <div class="data-list">
+        <h2>All url shorter by current user</h2>
+        <ul class="list-group" id="data-list">
+            <% data.forEach(function(data) { %>
+                <li class="list-group-item">
+                    <%= data.name %>
+                    <%= data.shortUrl %>
+                </li>
+            <% }); %>
+        </ul>
+    </div>
+</div>
+<script>
+    document.getElementById('dataForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const formData = {
+            name: document.getElementById("name").value,
+            url: document.getElementById("url").value,
+        }
+
+        fetch('/add', {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": "Basic John:qwerty"
+            },
+            body: JSON.stringify(formData)
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Network response was not ok.');
+            })
+            .then(data => {
+                document.getElementById('responseMessage').innerHTML = '<span class="success-message">Url added successfully</span>';
+
+                const userList = document.getElementById('data-list');
+                const newUrlItem = document.createElement('li');
+                newUrlItem.textContent = formData.name;
+                newUrlItem.classList.add('list-group-item')
+                userList.appendChild(newUrlItem);
+            })
+            .catch(error => {
+                if (error.message === '400') {
+                    document.getElementById('responseMessage').innerHTML = '<span class="error-message">Error creating user: Invalid data.</span>';
+                } else if (error.message === '500') {
+                    document.getElementById('responseMessage').innerHTML = '<span class="error-message">Server error. Try again later.</span>';
+                } else {
+                    document.getElementById('responseMessage').innerHTML = '<span class="error-message">' + error.message + '</span>';
+                }
+            });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>User creation</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="index.css">
+</head>
+<body>
+<div class="main-container">
+    <form class="user-creation" id="userForm">
+        <h2>Create a user</h2>
+        <div class="mb-3">
+            <label for="userName" class="form-label">Email address</label>
+            <input type="text" class="form-control" id="userName">
+        </div>
+        <div class="mb-3">
+            <label for="userPassword" class="form-label">Password</label>
+            <input type="password" class="form-control" id="userPassword">
+        </div>
+        <div class="d-flex p-2">
+            <button type="submit" class="btn btn-primary">Submit</button>
+            <div class="response-message" id="responseMessage"></div>
+        </div>
+    </form>
+    <div class="users-list">
+        <h2>All users</h2>
+        <ul class="list-group" id="users-list">
+            <% users.forEach(function(user) { %>
+                <li class="list-group-item"><%= user.name %></li>
+            <% }); %>
+        </ul>
+    </div>
+</div>
+<script>
+    document.getElementById('userForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const formData = {
+            name: document.getElementById("userName").value,
+            password: document.getElementById("userPassword").value,
+        }
+
+        fetch('/users/create', {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData)
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Network response was not ok.');
+            })
+            .then(data => {
+                document.getElementById('responseMessage').innerHTML = '<span class="success-message">User created successfully!</span>';
+
+                const userList = document.getElementById('users-list');
+                const newUserItem = document.createElement('li');
+                newUserItem.textContent = `${formData.name}${formData.url}`;
+                newUserItem.classList.add('list-group-item')
+                userList.appendChild(newUserItem);
+            })
+            .catch(error => {
+                if (error.message === '400') {
+                    document.getElementById('responseMessage').innerHTML = '<span class="error-message">Error creating user: Invalid data.</span>';
+                } else if (error.message === '500') {
+                    document.getElementById('responseMessage').innerHTML = '<span class="error-message">Server error. Try again later.</span>';
+                } else {
+                    document.getElementById('responseMessage').innerHTML = '<span class="error-message">' + error.message + '</span>';
+                }
+            });
+    });
+</script>
+</body>
+</html>
