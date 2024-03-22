@@ -1,6 +1,9 @@
 const map = new Map();
 
-export default class UserRepository {
+map.set("0", {id: 0, name: "John", password: "qwerty", created_time: "John"});
+
+
+export default class  {
     save(user) {
         map.set(user.id, user);
     }
