@@ -1,4 +1,4 @@
-import express, {json} from "express"
+import express from "express"
 import {codeRouter} from "./controllers/codeRouter.js";
 import {userRouter} from "./controllers/userRouter.js";
 import {dataRouter} from "./controllers/dataRouter.js";
@@ -19,9 +19,6 @@ redisClient.connect().catch(console.error);
 
 redisClient.set("MyTest", "VALUEEE shoto tam");
 
-// const test = await redisClient.get("MyTest");
-//
-// console.log("Redis:", test);
 
 const app = express();
 
@@ -40,22 +37,8 @@ app.use(session({
     cookie: {
         httpOnly: true,
         domain: "127.0.0.1",
-        //     maxAge: 3600
     }
 }));
-
-// app.use(sessionMiddleware);
-// app.use(session({
-//     secret: 'keyboard cat',
-//     name: 'SessionId',
-//     resave: false,
-//     saveUninitialized: false,
-//     cookie: {
-//         httpOnly: true,
-//         domain: '127.0.0.1',
-//         maxAge: 3600,
-//     }
-// }));
 
 app.use('/', dataRouter);
 app.use('/', codeRouter);
