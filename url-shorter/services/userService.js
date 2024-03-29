@@ -34,6 +34,16 @@ function getUsersPublicData() {
     return result;
 }
 
-export {createUser, getUser, getUserByName, getUsersPublicData}
+function checkPassword(name, password) {
+    if(!name || !password){
+        return false;
+    }
+
+    const user = repository.getByName(name);
+
+    return user?.password === password;
+}
+
+export {createUser, getUser, getUserByName, getUsersPublicData, checkPassword}
 
 

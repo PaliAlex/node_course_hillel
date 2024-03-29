@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="index.css">
+    <title>Login Page</title>
+</head>
+<body>
+<div class="login-container">
+    <h2>Login Page</h2>
+    <% if (errorMessage) { %>
+        <div style="color: red;"><%= errorMessage %></div>
+    <% } %>
+    <form action="/login" method="POST" class="login-form">
+        <div class="mb-3">
+            <label for="login" class="form-label">Login</label>
+            <input type="text" id="login" name="login" class="form-control" required>
+        </div>
+        <div class="mb-3">
+            <label for="password" class="form-label">Password</label>
+            <input type="password" id="password" name="password" class="form-control" required>
+        </div>
+        <div>
+            <button type="submit" value="login" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>
