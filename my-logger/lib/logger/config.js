@@ -30,7 +30,8 @@ function enrichConfig(config) {
 }
 
 function getConfiguration() {
-    const file = fs.readFileSync(process.env.LOG_CONFIG_FILE, 'utf-8');
+    const filePath = process.env.LOG_CONFIG_FILE || '/Users/sashko/WebstormProjects/node_course_hillel/my-logger/logger.json'
+    const file = fs.readFileSync(filePath, 'utf-8');
     return JSON.parse(file);
 }
 

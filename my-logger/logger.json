@@ -1,6 +1,6 @@
 {
   "logLevel": "Info",
-  "appender": ["network"],
+  "appender": ["CONSOLE"],
   "format": "csv",
   "port": 7000,
   "hostname": "localhost"

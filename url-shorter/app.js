@@ -1,4 +1,5 @@
 import express from "express"
+import logger from "my-logger";
 import {codeRouter} from "./controllers/codeRouter.js";
 import {userRouter} from "./controllers/userRouter.js";
 import {dataRouter} from "./controllers/dataRouter.js";
@@ -8,6 +9,8 @@ import session from "express-session";
 import {generateString} from "./utils/generateString.js";
 import {createClient} from "redis";
 import RedisStore from "connect-redis";
+
+const log = logger.getLogger("app.js");
 
 // Initialize client.
 export let redisClient = createClient({
@@ -67,7 +70,7 @@ app.set('view engine', 'ejs');
 app.use(express.static("views"));
 
 app.listen(3001, () => {
-    console.log("Server Started");
+    log.info("Server Started");
 })
 
 
