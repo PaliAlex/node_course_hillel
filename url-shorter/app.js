@@ -53,7 +53,6 @@ app.use((req, res, next) => {
         return next();
     }
 
-    console.log('ryyyr');
     res.status(401).send("Unauthorized");
 });
 
