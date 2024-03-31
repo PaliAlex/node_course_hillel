@@ -12,16 +12,16 @@ function createUser(user){
     repository.save(newUser);
 }
 
-function getUser(id){
-    return repository.get(id);
+async function getUser(id){
+    return await repository.get(id);
 }
 
-function getUserByName(name){
-    return repository.getByName(name);
+async function getUserByName(name){
+    return await repository.getByName(name);
 }
 
-function getUsersPublicData() {
-    const users = repository.getAll();
+async function getUsersPublicData() {
+    const users = await repository.getAll();
 
     const result = [];
     for (const user of users) {
@@ -34,12 +34,12 @@ function getUsersPublicData() {
     return result;
 }
 
-function checkPassword(name, password) {
+async function checkPassword(name, password) {
     if(!name || !password){
         return false;
     }
 
-    const user = repository.getByName(name);
+    const user = await repository.getByName(name);
 
     return user?.password === password;
 }

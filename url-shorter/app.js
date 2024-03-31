@@ -43,6 +43,7 @@ app.use(session({
     }
 }));
 
+app.use('/users', userRouter);
 app.use('/', dataRouter);
 app.use('/', codeRouter);
 app.use('/login', loginRouter);
@@ -52,6 +53,7 @@ app.use((req, res, next) => {
         return next();
     }
 
+    console.log('ryyyr');
     res.status(401).send("Unauthorized");
 });
 
@@ -63,7 +65,6 @@ app.use((req, res, next) => {
     next();
 })
 
-app.use('/users', userRouter);
 
 
 app.set('view engine', 'ejs');

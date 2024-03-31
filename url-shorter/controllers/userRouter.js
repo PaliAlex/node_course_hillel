@@ -1,12 +1,18 @@
 import express from "express";
-import {createUser, getUsersPublicData} from "../services/userService.js";
+import {createUser, getUsersPublicData, getUser} from "../services/userService.js";
 
 export const userRouter = express.Router();
 
-userRouter.get('/', (req, res) => {
-    const users = getUsersPublicData();
+userRouter.get('/', async (req, res) => {
+    const users = await getUsersPublicData();
 
     res.render('users', { users, csrfToken: req.session.csrfToken });
+});
+
+userRouter.get('/:userId', async (req, res) => {
+    const user = await getUser(req.params.userId);
+
+    res.json(user);
 })
 
 userRouter.post(
@@ -31,8 +37,8 @@ userRouter.get(
     "/all",
     // authMiddleware,
     express.json(),
-    (req, res) => {
-        const users = getUsersPublicData();
+    async (req, res) => {
+        const users = await getUsersPublicData();
 
         res.json(users);
         res.render("users", {users});
