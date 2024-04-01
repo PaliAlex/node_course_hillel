@@ -4,9 +4,9 @@ import {getUserByName} from "./userService.js";
 
 const repository = new DataRepository()
 
-function addData(data, userName){
+async function addData(data, userName){
     const code = generateHash(5);
-    const userId = getUserByName(userName).id;
+    const userId = await getUserByName(userName).id;
 
     const addedData = {
         ...data,
@@ -16,7 +16,7 @@ function addData(data, userName){
         userId,
     }
 
-    repository.save(addedData);
+    await repository.save(addedData);
 
     return addedData;
 }
@@ -25,9 +25,9 @@ function getDataById(id){
     return repository.get(id);
 }
 
-function getAllData(userName){
+async function getAllData(userName){
     const dataRepository = repository.getAll();
-    const userId = getUserByName(userName).id;
+    const userId = await getUserByName(userName).id;
 
     const result = [];
     for (const data of dataRepository) {
