@@ -32,13 +32,11 @@ async function getAllData(userName){
 
     const result = [];
     for (const data of dataRepository) {
-        console.log(data, 'datadata')
         if(userId === data.userId){
             result.push(data)
         }
     }
 
-    console.log(result, 'resultresult')
     return result;
 }
 

@@ -1,7 +1,5 @@
-import postgresClient from '../postgress/client.js';
-import client from "../postgress/client-knex.js";
 import Data from "../entity/Data.js";
-import Users from "../entity/Users.js";
+import client from "../postgress/client-knex.js";
 
 export default class DataRepository {
     async save(data) {
