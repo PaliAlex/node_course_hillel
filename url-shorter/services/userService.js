@@ -4,16 +4,11 @@ import {generate} from "../utils/storageGenerators.js";
 const repository = new UserRepository()
 
 function createUser(user){
-    const newUser = {
-        id: generate('user'),
-        ...user,
-    };
-
-    repository.save(newUser);
+    repository.save(user);
 }
 
 async function getUser(id){
-    return await repository.get(id);
+    return repository.get(id);
 }
 
 async function getUserByName(name){
