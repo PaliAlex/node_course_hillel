@@ -5,7 +5,8 @@ export default async (req, res, next) => {
     if (auth?.startsWith("Basic ")) {
         const authData = auth.substring(6, auth.length).split(":");
         const user = await getUserByName(authData[0]);
-        if(user.name === authData[0] && user.password === authData[1]){
+
+        if(user[0].name === authData[0] && user[0].password === authData[1]){
             next();
             return;
         }

@@ -5,11 +5,11 @@ import {addData, getAllData, getDataById} from "../services/dataService.js";
 
 export const dataRouter = express.Router();
 
-dataRouter.use('/url-shorter', (req, res) => {
+dataRouter.use('/url-shorter', async (req, res) => {
     req.headers.authorization = 'Basic John:qwerty';
     const userName = getAuthUserName(req);
 
-    const data = getAllData(userName);
+    const data = await getAllData(userName);
 
     res.render('url-shorter',  {data});
 })

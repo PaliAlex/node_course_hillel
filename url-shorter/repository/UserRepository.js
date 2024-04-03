@@ -1,39 +1,24 @@
-import postgresClient from '../postgress/client.js';
+import Users from "../entity/Users.js";
+import client from "../postgress/client-knex.js";
 
 export default class UserRepository {
     async save(user) {
-        const query = {
-            text: 'INSERT INTO application_users(name, email, password ) VALUES($1, $2, $3)',
-            values: [user.name, user.email, user.password ],
-        };
-
-        await postgresClient.query(query);
+        await Users.query().insert({
+            name: user.name,
+            password:user.password,
+            email: user.email,
+        });
     }
 
     async get(userId) {
-        const query = {
-            text: 'SELECT * FROM application_users WHERE id = $1',
-            values: [userId],
-        };
-
-        return await postgresClient.query(query);
+        return Users.query().findById(userId);
     }
 
     async getAll() {
-        const query = 'SELECT * FROM application_users';
-        const users = await postgresClient.query(query);
-
-        return users.rows;
+        return Users.query();
     }
 
     async getByName(name) {
-        const query = {
-            text: 'SELECT * FROM application_users WHERE name = $1',
-            values: [name],
-        };
-
-        const user = await postgresClient.query(query);
-
-        return user.rows[0];
+        return Users.query().where('name', name);
     }
 }
